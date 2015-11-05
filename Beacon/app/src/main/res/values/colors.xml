@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="orange_app_dark">#ae5100</color>
+    <color name="orange_app">#fa9d39</color><!--#fa9d39 -->
+    <color name="white">#ffffff</color>
+
+</resources>

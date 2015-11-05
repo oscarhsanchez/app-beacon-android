@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">GPO Vallas</string>
+    <string name="app_name_condensed">Vallas</string>
+
+    <string name="action_scanner">Scanner</string>
+    <string name="empty">Empty</string>
+    <string name="copyright">Copyright (c) 2015. GPO VALLAS. All rights reserved.</string>
+    <string name="beacon_technologies">Beacon \nTechnologies</string>
+    <string name="bluetooth">Bluetooth Low Energy</string>
+
+    <string name="name_">Name:</string>
+    <string name="major_">Major:</string>
+    <string name="minor_">Minor:</string>
+    <string name="place_">Place:</string>
+    <string name="zone_">Zone:</string>
+</resources>

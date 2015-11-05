@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="beacon.rb.app">
+
+    <uses-sdk
+        android:minSdkVersion="18"
+        android:targetSdkVersion="23"/>
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <application
+        android:name=".activities.BeaconApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+
+
+
+        <activity android:name=".activities.Splash"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".activities.MainActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".activities.FullScreenImageActivity"
+            android:windowSoftInputMode="stateHidden"/>
+
+        <activity android:name=".activities.WebViewActivity"
+            android:windowSoftInputMode="stateHidden"/>
+
+        <activity android:name="com.google.zxing.client.android.CaptureActivity"
+            android:configChanges="keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.google.zxing.client.android.SCAN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!-- User Google Play Services -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <!-- MOCA SDK configuration -->
+        <meta-data
+            android:name="moca.APP_KEY"
+            android:value="fB1RjZxiTAm8vYkIHTfGzQ" />
+        <meta-data
+            android:name="moca.APP_SECRET"
+            android:value="GEALvtJmFmpFeqCnWT8J+m0gFns=" />
+        <meta-data
+            android:name="moca.LOG_LEVEL"
+            android:value="info" />
+        <meta-data
+            android:name="moca.AUTOMATIC_PUSH_SETUP_ENABLED"
+            android:value="true" />
+        <meta-data
+            android:name="moca.GCM_SENDER"
+            android:value="AIzaSyBBJNJT7kog-TROrdppaXLelom_x5WkU88" />
+        <meta-data
+            android:name="moca.PROXIMITY_SERVICE_ENABLED"
+            android:value="true" />
+        <meta-data
+            android:name="moca.GEOLOCATION_SERVICE_ENABLED"
+            android:value="true" />
+        <meta-data
+            android:name="moca.BACKGROUND_LOCATION_ENABLED"
+            android:value="true" />
+        <meta-data
+            android:name="moca.DATA_FETCH_INTERVAL_MS"
+            android:value="auto" />
+        <meta-data
+            android:name="moca.EVENT_UPLOAD_INTERVAL_MS"
+            android:value="auto" />
+
+        <!-- Required by MOCA to receive GCM remote push notifications -->
+        <receiver
+            android:name="com.innoquant.moca.push.GcmPushReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="com.innoquant.mocaapp" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

@@ -1,0 +1,16 @@
+<resources>
+    <dimen name="activity_horizontal_margin">24dp</dimen>
+    <dimen name="activity_vertical_margin">24dp</dimen>
+
+    <dimen name="action_button_width">80dp</dimen>
+    <dimen name="action_button_margin_bottom">40dp</dimen>
+    <dimen name="tool_bar_vertical_margin">12dp</dimen>
+    <dimen name="splash_horizontal_margin">40dp</dimen>
+    <dimen name="beacon_icon_row_width">100dp</dimen>
+    <dimen name="title_row_width">80dp</dimen>
+
+    <!-- TEXT SIZES-->
+    <dimen name="sp12">16sp</dimen>
+    <dimen name="sp14">20sp</dimen>
+    <dimen name="sp16">24sp</dimen>
+</resources>
