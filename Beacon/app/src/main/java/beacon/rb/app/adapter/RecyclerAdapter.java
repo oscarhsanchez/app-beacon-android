@@ -28,7 +28,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     private Activity activity;
     private LayoutInflater inflater;
 
-    private int lastPosition;
 
     public RecyclerAdapter(Activity act, HashMap<String, MOCABeacon> items) {
         this.activity = act;

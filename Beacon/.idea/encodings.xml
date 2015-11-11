@@ -2,7 +2,8 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/app/src/main/java/beacon/rb/app/activities/WebViewActivity.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/anim/btn_anim.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/anim/btn_anim_enter.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/anim/btn_anim_exit.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/anim/slide_down.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/anim/slide_up.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/transparent.xml" charset="windows-1252" />

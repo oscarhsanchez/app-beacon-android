@@ -16,8 +16,6 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
-
-
         <activity android:name=".activities.Splash"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -63,6 +61,8 @@
         <meta-data
             android:name="moca.LOG_LEVEL"
             android:value="info" />
+        <meta-data android:name="MOCA_AUTO_INIT_ON_PUSH"
+            android:value="true"/>
         <meta-data
             android:name="moca.AUTOMATIC_PUSH_SETUP_ENABLED"
             android:value="true" />
@@ -80,10 +80,10 @@
             android:value="true" />
         <meta-data
             android:name="moca.DATA_FETCH_INTERVAL_MS"
-            android:value="auto" />
+            android:value="@string/DATA_FETCH_INTERVAL_MS" />
         <meta-data
             android:name="moca.EVENT_UPLOAD_INTERVAL_MS"
-            android:value="auto" />
+            android:value="@string/DATA_FETCH_INTERVAL_MS" />
 
         <!-- Required by MOCA to receive GCM remote push notifications -->
         <receiver

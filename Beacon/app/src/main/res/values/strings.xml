@@ -13,4 +13,5 @@
     <string name="minor_">Minor:</string>
     <string name="place_">Place:</string>
     <string name="zone_">Zone:</string>
+    <string name="DATA_FETCH_INTERVAL_MS">2000</string>
 </resources>

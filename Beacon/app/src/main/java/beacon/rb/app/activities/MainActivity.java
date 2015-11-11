@@ -1,14 +1,20 @@
 package beacon.rb.app.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -21,6 +27,7 @@ import android.widget.Toast;
 import com.innoquant.moca.MOCA;
 import com.innoquant.moca.MOCAAction;
 import com.innoquant.moca.MOCABeacon;
+import com.innoquant.moca.MOCAConfig;
 import com.innoquant.moca.MOCAPlace;
 import com.innoquant.moca.MOCAProximity;
 import com.innoquant.moca.MOCAProximityService;
@@ -33,7 +40,6 @@ import beacon.rb.app.R;
 import beacon.rb.app.adapter.RecyclerAdapter;
 import beacon.rb.app.components.HidingScrollListener;
 import beacon.rb.app.components.SimpleDividerItemDecoration;
-
 
 public class MainActivity extends AppCompatActivity implements MOCAProximityService.EventListener, MOCAProximityService.ActionListener {
 
@@ -49,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements MOCAProximityServ
     private HashMap<String, MOCABeacon> beacons = new HashMap<>();
 
     private Boolean firstLoad = true;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements MOCAProximityServ
         tvPlace = (TextView) findViewById(R.id.place);
         tvZone = (TextView) findViewById(R.id.zone);
         btnScanner = (ImageButton) findViewById(R.id.btnScanner);
+
         MOCA.initializeSDK(getApplication());
         MOCAProximityService service = MOCA.getProximityService();
         if (service != null) {
@@ -66,35 +74,42 @@ public class MainActivity extends AppCompatActivity implements MOCAProximityServ
         }
 
         initToolBar();
+        initProgressDialog();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(firstLoad) {
+        if (firstLoad) {
             toolbar.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     initRecyclerView();
                 }
-            },20);
-
-            btnScanner.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startAnimations();
-                }
-            },500);
+            }, 20);
             firstLoad = false;
         }
+        btnScanner.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                floatingButtonEnterAnimation();
+            }
+        }, 500);
     }
 
-    private void startAnimations(){
+    /**
+     * Init floatingActionButton enter animmation
+     */
+    private void floatingButtonEnterAnimation() {
         btnScanner.setVisibility(View.VISIBLE);
-        Animation btnAnim = AnimationUtils.loadAnimation(this,R.anim.btn_anim);
+        Animation btnAnim = AnimationUtils.loadAnimation(this, R.anim.btn_anim_enter);
         btnScanner.startAnimation(btnAnim);
     }
 
+    /**
+     * Init toolbar
+     */
     private void initToolBar() {
         mToolbarContainer = (LinearLayout) findViewById(R.id.toolbarContainer);
         toolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -102,6 +117,9 @@ public class MainActivity extends AppCompatActivity implements MOCAProximityServ
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
+    /**
+     * Init beacon list
+     */
     private void initRecyclerView() {
         layoutZone = (LinearLayout) findViewById(R.id.placeZone);
         beaconRecyclerList = (RecyclerView) findViewById(R.id.beaconList);
@@ -132,18 +150,24 @@ public class MainActivity extends AppCompatActivity implements MOCAProximityServ
 
     }
 
-
+    /**
+     * Init progress dialog
+     */
+    private void initProgressDialog() {
+        dialog = new ProgressDialog(MainActivity.this);
+        dialog.setMessage("Loading scanner...");
+        dialog.setCancelable(false);
+        dialog.setIndeterminate(true);
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         firstLoad = false;
-        MOCA.shutdown();
     }
 
-    /*
-     * Event Listener
-     * */
+
+    //REGION EVENT LISTENERS
     @Override
     public void didEnterRange(MOCABeacon mocaBeacon, MOCAProximity mocaProximity) {
         updateBeacon(mocaBeacon);
@@ -210,13 +234,10 @@ public class MainActivity extends AppCompatActivity implements MOCAProximityServ
         for (MOCABeacon b : list) {
             beacons.put(b.getId(), b);
         }
-        if(recyclerAdapter!=null) recyclerAdapter.notifyDataSetChanged();
+        if (recyclerAdapter != null) recyclerAdapter.notifyDataSetChanged();
     }
 
-
-    /*
-    * Action Listener
-    * */
+    // REGION ACTION LISTENERS
     @Override
     public boolean displayNotificationAlert(MOCAAction mocaAction, String s) {
         return false;
@@ -242,7 +263,6 @@ public class MainActivity extends AppCompatActivity implements MOCAProximityServ
         startActivity(intent);
         return false;
     }
-
 
     @Override
     public boolean displayImageFromUrl(MOCAAction mocaAction, String s) {
@@ -272,7 +292,11 @@ public class MainActivity extends AppCompatActivity implements MOCAProximityServ
         return false;
     }
 
-
+    /**
+     * Update beacon data
+     *
+     * @param mocaBeacon Beacon updated
+     */
     private void updateBeacon(final MOCABeacon mocaBeacon) {
         if (beacons != null && recyclerAdapter != null) {
             runOnUiThread(new Runnable() {
@@ -282,25 +306,53 @@ public class MainActivity extends AppCompatActivity implements MOCAProximityServ
                         recyclerAdapter.notifyDataSetChanged();
                 }
             });
-
         }
     }
 
-
+    /**
+     * Performs click on scanner button
+     *
+     * @param v View performs click
+     */
     public void onClickScanner(View v) {
-        try {
-            Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-            intent.putExtra("SCAN_MODE", "QR_CODE_MODE, PRODUCT_MODE");
-            startActivityForResult(intent, REQUEST_SCANNER);
+        dialog.show();
+        Animation btnAnim = AnimationUtils.loadAnimation(this, R.anim.btn_anim_exit);
+        btnAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "ERROR:" + e, Toast.LENGTH_SHORT).show();
-        }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                btnScanner.setVisibility(View.GONE);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+                            intent.putExtra("SCAN_MODE", "QR_CODE_MODE, PRODUCT_MODE");
+                            startActivityForResult(intent, REQUEST_SCANNER);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "ERROR:" + e, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, 400);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        btnScanner.startAnimation(btnAnim);
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_SCANNER) {
+            if (dialog != null) dialog.dismiss();
 
             if (resultCode == Activity.RESULT_OK) {
                 String result = intent.getStringExtra("SCAN_RESULT");
@@ -309,5 +361,11 @@ public class MainActivity extends AppCompatActivity implements MOCAProximityServ
                 startActivity(webIntent);
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        moveTaskToBack(true);
     }
 }
