@@ -13,6 +13,8 @@ public class BeaconApplication extends Application{
 
     public static ImageLoader imageLoader;
 
+    public static MainActivity activity;
+
     @Override
     public void onCreate() {
         super.onCreate();

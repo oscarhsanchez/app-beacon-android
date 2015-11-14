@@ -96,6 +96,8 @@
                 <category android:name="com.innoquant.mocaapp" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".activities.BeaconService" />
     </application>
 
 </manifest>
