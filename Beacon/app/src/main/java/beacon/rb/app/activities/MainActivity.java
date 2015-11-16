@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         initToolBar();
         initProgressDialog();
+        loadBeacons(BeaconApplication.beacons);
 
     }
 
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        BeaconApplication.activity = this;
         if (firstLoad) {
             toolbar.postDelayed(new Runnable() {
                 @Override
@@ -158,10 +160,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void loadBeacons(List<MOCABeacon> list){
-        for (MOCABeacon b : list) {
-            beacons.put(b.getId(), b);
+        if(list!=null) {
+            for (MOCABeacon b : list) {
+                beacons.put(b.getId(), b);
+            }
+            if (recyclerAdapter != null) recyclerAdapter.notifyDataSetChanged();
         }
-        if (recyclerAdapter != null) recyclerAdapter.notifyDataSetChanged();
     }
 
 

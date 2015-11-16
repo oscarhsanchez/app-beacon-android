@@ -2,10 +2,8 @@ package beacon.rb.app.activities;
 
 import android.app.Service;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.innoquant.moca.MOCA;
 import com.innoquant.moca.MOCAAction;
@@ -22,13 +20,10 @@ import java.util.List;
  */
 public class BeaconService extends Service implements MOCAProximityService.EventListener, MOCAProximityService.ActionListener {
 
-    private MainActivity activity;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        activity = BeaconApplication.activity;
 
         if (!MOCA.initialized())
             MOCA.initializeSDK(getApplication());
@@ -51,42 +46,37 @@ public class BeaconService extends Service implements MOCAProximityService.Event
     //REGION EVENT LISTENERS
     @Override
     public void didEnterRange(MOCABeacon mocaBeacon, MOCAProximity mocaProximity) {
-        Log.w("SERVICE", "ENTERRaNGE");
-        if (activity != null) activity.updateBeacon(mocaBeacon);
+        if (BeaconApplication.activity != null) BeaconApplication.activity.updateBeacon(mocaBeacon);
     }
 
     @Override
     public void didExitRange(MOCABeacon mocaBeacon) {
-        Log.w("SERVICE", "EXITRaNGE");
-        if (activity != null) activity.updateBeacon(mocaBeacon);
+        if (BeaconApplication.activity != null) BeaconApplication.activity.updateBeacon(mocaBeacon);
     }
 
     @Override
     public void didBeaconProximityChange(MOCABeacon mocaBeacon, MOCAProximity mocaProximity, MOCAProximity mocaProximity1) {
-        Log.w("SERVICE", "PROXIMITY");
-        if (activity != null) activity.updateBeacon(mocaBeacon);
+        if (BeaconApplication.activity != null) BeaconApplication.activity.updateBeacon(mocaBeacon);
     }
 
     @Override
     public void didEnterPlace(final MOCAPlace mocaPlace) {
-        Log.w("SERVICE", "ENTERPLACe");
-        if (activity != null)  activity.loadLocation(1, mocaPlace.getName());
+        if (BeaconApplication.activity != null)  BeaconApplication.activity.loadLocation(1, mocaPlace.getName());
     }
 
     @Override
     public void didExitPlace(MOCAPlace mocaPlace) {
-        Log.w("SERVICE", "EXITPLACE");
-        if (activity != null) activity.loadLocation(1, "");
+        if (BeaconApplication.activity != null) BeaconApplication.activity.loadLocation(1, "");
     }
 
     @Override
     public void didEnterZone(final MOCAZone mocaZone) {
-        if (activity != null) activity.loadLocation(0, mocaZone.getName());
+        if (BeaconApplication.activity != null) BeaconApplication.activity.loadLocation(0, mocaZone.getName());
     }
 
     @Override
     public void didExitZone(MOCAZone mocaZone) {
-        if (activity != null) activity.loadLocation(0, "");
+        if (BeaconApplication.activity != null) BeaconApplication.activity.loadLocation(0, "");
     }
 
     @Override
@@ -96,7 +86,8 @@ public class BeaconService extends Service implements MOCAProximityService.Event
 
     @Override
     public void didLoadedBeaconsData(List<MOCABeacon> list) {
-        if (activity != null) activity.loadBeacons(list);
+        BeaconApplication.beacons = list;
+        if (BeaconApplication.activity != null) BeaconApplication.activity.loadBeacons(list);
     }
 
     // REGION ACTION LISTENERS
@@ -107,7 +98,7 @@ public class BeaconService extends Service implements MOCAProximityService.Event
 
     @Override
     public boolean openUrl(MOCAAction mocaAction, String s) {
-        if (activity != null) activity.startWebView(s);
+        if (BeaconApplication.activity != null) BeaconApplication.activity.startWebView(s);
         return false;
     }
 
@@ -118,13 +109,13 @@ public class BeaconService extends Service implements MOCAProximityService.Event
 
     @Override
     public boolean playVideoFromUrl(MOCAAction mocaAction, String s) {
-        if (activity != null) activity.startVideo(s);
+        if (BeaconApplication.activity != null) BeaconApplication.activity.startVideo(s);
         return false;
     }
 
     @Override
     public boolean displayImageFromUrl(MOCAAction mocaAction, String s) {
-        if (activity != null) activity.startImageViewer(s);
+        if (BeaconApplication.activity != null) BeaconApplication.activity.startImageViewer(s);
         return false;
     }
 
