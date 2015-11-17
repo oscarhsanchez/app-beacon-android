@@ -46,20 +46,24 @@ public class MainActivity extends AppCompatActivity {
     private Boolean firstLoad = true;
     private ProgressDialog dialog;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         BeaconApplication.activity = this;
+        Bundle extras = getIntent().getExtras();
+        if(extras!=null){
+            if(extras.containsKey("background")){
+                moveTaskToBack(true);
+            }
+        }
 
         tvPlace = (TextView) findViewById(R.id.place);
         tvZone = (TextView) findViewById(R.id.zone);
         btnScanner = (ImageButton) findViewById(R.id.btnScanner);
 
-        //Iniciamos servicio
-        Intent service = new Intent(this, BeaconService.class);
-        startService(service);
 
         initToolBar();
         initProgressDialog();
@@ -169,20 +173,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void loadLocation(final int type, final String name){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(type == 0){ //Zone
-                    tvZone.setText(name);
-                }else if(type==1){ //Place
-                    tvPlace.setText(name);
-                }
-            }
-        });
-    }
-
-
     public void startWebView(String s){
         Intent intent = new Intent(this, WebViewActivity.class);
         intent.putExtra("url", s);
@@ -209,13 +199,19 @@ public class MainActivity extends AppCompatActivity {
         if (beacons != null && recyclerAdapter != null) {
             runOnUiThread(new Runnable() {
                 public void run() {
+                    if(mocaBeacon.getProximity().name().equals("Near") ||
+                            mocaBeacon.getProximity().name().equals("Immediate")) {
+                        tvZone.setText(mocaBeacon.getZone() != null ? mocaBeacon.getZone().getName() : "--");
+                        tvPlace.setText(mocaBeacon.getZone()!=null &&
+                                mocaBeacon.getZone().getPlace()!=null ? mocaBeacon.getZone().getPlace().getName() : "--");
+                    }
                     beacons.put(mocaBeacon.getId(), mocaBeacon);
                     if (recyclerAdapter != null)
                         recyclerAdapter.notifyDataSetChanged();
-                }
-            });
-        }
+            }
+        });
     }
+}
 
     /**
      * Performs click on scanner button

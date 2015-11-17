@@ -4,10 +4,12 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.innoquant.moca.MOCA;
 import com.innoquant.moca.MOCAAction;
 import com.innoquant.moca.MOCABeacon;
+import com.innoquant.moca.MOCAConfig;
 import com.innoquant.moca.MOCAPlace;
 import com.innoquant.moca.MOCAProximity;
 import com.innoquant.moca.MOCAProximityService;
@@ -24,17 +26,19 @@ public class BeaconService extends Service implements MOCAProximityService.Event
     @Override
     public void onCreate() {
         super.onCreate();
+    }
 
-        if (!MOCA.initialized())
-            MOCA.initializeSDK(getApplication());
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        MOCA.initializeSDK(getApplication());
 
         MOCAProximityService MOCAservice = MOCA.getProximityService();
         if (MOCAservice != null) {
             MOCAservice.setEventListener(BeaconService.this);
             MOCAservice.setActionListener(BeaconService.this);
         }
+        return START_STICKY;
     }
-
 
     @Nullable
     @Override
@@ -61,22 +65,18 @@ public class BeaconService extends Service implements MOCAProximityService.Event
 
     @Override
     public void didEnterPlace(final MOCAPlace mocaPlace) {
-        if (BeaconApplication.activity != null)  BeaconApplication.activity.loadLocation(1, mocaPlace.getName());
     }
 
     @Override
     public void didExitPlace(MOCAPlace mocaPlace) {
-        if (BeaconApplication.activity != null) BeaconApplication.activity.loadLocation(1, "");
     }
 
     @Override
     public void didEnterZone(final MOCAZone mocaZone) {
-        if (BeaconApplication.activity != null) BeaconApplication.activity.loadLocation(0, mocaZone.getName());
     }
 
     @Override
     public void didExitZone(MOCAZone mocaZone) {
-        if (BeaconApplication.activity != null) BeaconApplication.activity.loadLocation(0, "");
     }
 
     @Override
